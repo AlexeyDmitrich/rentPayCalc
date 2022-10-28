@@ -169,5 +169,21 @@ else # при нажатии нет
         fi
 fi
 
+`kdialog --title "Сверка тарифов" --yesno "В прошлом месяце тариф на отопление \n составил $taripheGas р. \n Он остался прежним?"`
+if [[ $? = 0 ]] #при нажатии Ок
+then
+    kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
+     # val=$inpval
+    newWarm=$warm
+else # при нажатии нет
+	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на отопление, \n используя точку для отделения копеек."`
+        if [[ $? = 0 ]] # при вводе данных
+        then
+            newWarm=$inpval
+        else # при отмене ввода
+	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+            exec mousepad $tempTar
+        fi
+fi
 
 echo "$newTaripheWaterIn, $newTaripheWaterOut, $newTaripheGas, $newTaripheEnergy, $newWarm" > $tempTar
