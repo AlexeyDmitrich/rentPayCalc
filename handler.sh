@@ -11,10 +11,9 @@ BEEP=/usr/share/sounds/freedesktop/stereo/bell.oga
 export DISPLAY SESSION_MANAGER XAUTHORITY DBUS_SESSION_BUS_ADDRES XDG_RUNTIME_DIR #BEEP
 
 #объявляем переменными рабочие файлы
-bigLog=bigLog.csv
-tempCounterGas=temp_counter_gas
-tempCounterWater=temp_counter_water
-tempCounterEnergy=temp_counter_energy
+bigLog=bigLog #.csv
+tempLog=temp_log #.csv
+tempCounters=temp_counters.csv
 
 
 #готовим сегодняшнюю дату
@@ -26,22 +25,48 @@ today=$datex
 
 #читаем последнюю строку из документа в формате "вчера, показания, расход"
 yest=`tail -1 $bigLog.csv`
-IFS=","
-read -a strarr <<< "$yest"
+# IFS=","
+# read -a strarr <<< "$yest"
 
-waterCountLast=${strarr[0]}    #
-waterTaripheIn=${strarr[1]}    #
-waterTaripheOut=${strarr[2]}   #
+# вносим строку для обработки во временный файл
+echo "$today, $yest" > $tempLog
 
-gasCounter=${strarr[3]}
-gasTariphe=${strarr[4]}
+countWaterNew=0
+countGasNew=0
+countEnergyNew=0
 
-energyCounter=${strarr[5]}
-energyTariphe=${strarr[6]}
+#создаем форму ввода показаний счетчика
+# электроэнергия
+inpval=`kdialog --title "Электроэнергия" --inputbox "Введите сегодняшние показания электросчётчика."`
+if [[ $? = 0 ]] #при наличии введенного значения
+then
+	# val=$inpval
+	countEnergyNew=$inpval
+else # при отмене ввода
+	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+        exec mousepad $tempCounters
+fi
 
-warm=${strarr[7]}
+# вода
+inpval=`kdialog --title "Водоснабжение-водоотведение" --inputbox "Введите сегодняшние показания счётчика расхода воды."`
+if [[ $? = 0 ]] #при наличии введенного значения
+then
+	# val=$inpval
+	countWaterNew=$inpval
+else # при отмене ввода
+	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+        exec mousepad $tempCounters
+fi
 
-com1=${strarr[8]}
-com2=${strarr[9]}
-build=${strarr[10]}
+# газ
+inpval=`kdialog --title "Газоснабжение" --inputbox "Введите сегодняшние показания счётчика расхода газа."`
+if [[ $? = 0 ]] #при наличии введенного значения
+then
+	# val=$inpval
+	countGasNew=$inpval
+else # при отмене ввода
+	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+        exec mousepad $tempCounters
+fi
 
+echo "$countWaterNew, $countGasNew, $countEnergyNew" > $tempCounters
