@@ -12,8 +12,9 @@ export DISPLAY SESSION_MANAGER XAUTHORITY DBUS_SESSION_BUS_ADDRES XDG_RUNTIME_DI
 
 #объявляем переменными рабочие файлы
 bigLog=bigLog #.csv
-tempLog=temp_log #.csv
+tempLog=temp_log.csv
 tempCounters=temp_counters.csv
+tempTar=temp_tariphes.csv
 
 
 #готовим сегодняшнюю дату
@@ -25,8 +26,12 @@ today=$datex
 
 #читаем последнюю строку из документа в формате "вчера, показания, расход"
 yest=`tail -1 $bigLog.csv`
-# IFS=","
-# read -a strarr <<< "$yest"
+IFS=","
+read -a strarr <<< "$yest"
+taripheWaterIn=${strarr[2]}
+taripheWaterOut=${strarr[3]}
+taripheGas=${strarr[5]} 
+taripheEnergy=${strarr[7]}
 
 # вносим строку для обработки во временный файл
 echo "$today, $yest" > $tempLog
@@ -70,3 +75,37 @@ else # при отмене ввода
 fi
 
 echo "$countWaterNew, $countGasNew, $countEnergyNew" > $tempCounters
+
+# сверка тарифов:
+
+`kdialog --title "Сверка тарифов" --yesno "На данный момент тариф на электроэнергию \n составляет $taripheEnergy"`
+if [[ $? = 0 ]] #при нажатии Ок
+then
+    kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
+     # val=$inpval
+else # при нажатии нет
+	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на электроэнергию, \n используя точку для отделения копеек."`
+        if [[ $? = 0 ]] # при вводе данных
+        then
+            newTaripheWater=$inpval
+        else # при отмене ввода
+	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+            exec mousepad $tempTar
+        fi
+fi
+
+`kdialog --title "Сверка тарифов" --yesno "На данный момент тариф на водоснабжение \n составляет $taripheWaterIn"`
+if [[ $? = 0 ]] #при нажатии Ок
+then
+    kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
+     # val=$inpval
+else # при нажатии нет
+	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на водоснабжение, \n используя точку для отделения копеек."`
+        if [[ $? = 0 ]] # при вводе данных
+        then
+            newTaripheWater=$inpval
+        else # при отмене ввода
+	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+            exec mousepad $tempTar
+        fi
+fi
