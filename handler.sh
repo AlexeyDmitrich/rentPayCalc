@@ -29,15 +29,21 @@ yest=`tail -1 $bigLog.csv`
 IFS=","
 read -a strarr <<< "$yest"
 
-taripheWaterIn=${strarr[1]}
+#водоснабжение
+taripheWaterIn=${strarr[6]}
 newTaripheWaterIn=0
-waterName="водоснабжение"
+waterInName="водоснабжение"
 
-taripheWaterOut=${strarr[2]}
+#водоотведение
+taripheWaterOut=${strarr[7]}
+newTaripheWaterOut=0
+waterOutName="водоотведение"
+
 taripheGas=${strarr[4]} 
 taripheEnergy=${strarr[6]}
 warm=${strarr[7]}
 build=${strarr[8]}
+waste=
 useBuild=${strarr[9]}
 rebuilding=${strarr[10]}
 
@@ -182,7 +188,7 @@ then
     kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
      # val=$inpval
     new=$1
-    return $new
+#    return $new
 else # при нажатии нет
 	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на $2, \n используя точку для отделения копеек."`
         if [[ $? = 0 ]] # при вводе данных
@@ -193,10 +199,16 @@ else # при нажатии нет
 	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
             exec nano $tempTar
         fi
-        return $new
+#        return $new
 fi
 }
 
-newTaripheWaterIn=$( markTariphe $taripheWaterIn, $waterName ) 
-echo "Новый тариф = $newTaripheWaterIn"
+markTariphe $taripheWaterIn, $waterInName
+newTaripheWaterIn=$new
+echo "Новый тариф на водоснабжение = $newTaripheWaterIn"
+
+markTariphe $taripheWaterOut, $waterOutName
+newTaripheWaterIn=$new
+echo "Новый тариф на водоотведение = $newTaripheWaterOut"
+
 #echo "$newTaripheWaterIn, $newTaripheWaterOut, $newTaripheGas, $newTaripheEnergy, $newWarm" > $tempTar
