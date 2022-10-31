@@ -69,7 +69,7 @@ rebuildingName="капремонт"
 
 
 # вносим строку для обработки во временный файл
-echo "$yest" > $tempLog
+echo "$today, ${strarr[1]}, ${strarr[2]}, ${strarr[3]}, ${strarr[4]}, ${strarr[5]}, ${strarr[6]}, ${strarr[7]}, ${strarr[8]}, ${strarr[9]}, ${strarr[10]}, ${strarr[11]}, ${strarr[12]}" > $tempLog
 
 countWaterNew=0
 countGasNew=0

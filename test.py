@@ -1,15 +1,16 @@
 import pandas as pd
 
+rent=6000
+
 allInOne = pd.read_csv('temp_log.csv', header=None)
 print(allInOne)
 
+date= allInOne[0]
+print(date)
 # собираем предыдущие показания:
 lastWater= float(allInOne[5])
 lastGas= float(allInOne[3])
 lastEnergy= float(allInOne[1])
-
-# отопление
-#warmTar=float(allInOne[8])
 
 # bash должен сформировать этот документ:
 newCounters = pd.read_csv('temp_counters.csv', header=None)
@@ -52,7 +53,24 @@ payWaste = payByTariphe (newTaripheWaste)
 payUnitedWater = payByTariphe (newTaripheUnitedWater)
 payRebuilding = payByTariphe (newTaripheRebuilding)
 
-summPay=(payEnergy+payGas+payWater+payWarm+payBuild+payWaste+payUnitedWater+payRebuilding)
+summPay=(payEnergy+payGas+payWater+payWarm+payBuild+payWaste+payUnitedWater+payRebuilding+rent)
 print ("Суммарная оплата составила: ", summPay)
 
-# формирование строки для csv
+# формирование чека
+tradeCheck = open ('check.txt', 'a+')
+tradeCheck.writelines(date + '\n')
+tradeCheck.writelines("расчет платежа: \n")
+tradeCheck.writelines("|     параметр           |   расход   |   к оплате  |\n")
+tradeCheck.writelines("| электроснабжение       |" + str(usage(lastEnergy,newEnergy)) + "| " + str(payEnergy) + "       |\n")
+tradeCheck.writelines("| газоснабжение          |" + str(usage(lastGas,newGas)) + "| " + str(payGas) + "       |\n")
+tradeCheck.writelines("| водоснабжение          |" + str(usage(lastWater,newWater)) + "| " + str(payWater) + "       |\n")
+tradeCheck.writelines("| отопление              |   ------   | " + str(payWarm) + "       |\n")
+tradeCheck.writelines("| содерж.домов.имущества |   ------   | " + str(payBuild) + "       |\n")
+tradeCheck.writelines("| обращение с ТКО        |   ------   | " + str(payWaste) + "       |\n")
+tradeCheck.writelines("| общедомовое ХВС        |   ------   | " + str(payUnitedWater) + "       |\n")
+tradeCheck.writelines("| капремонт              |   ------   | " + str(payRebuilding) + "       |\n")
+tradeCheck.writelines("\n Итого, считая стоимость аренды (" + str(rent) + "р.) :" + str(summPay) + "р. \n \n")
+tradeCheck.close
+
+bigLog = open('bigLog.csv', 'a+')
+bigLog.writelines(str(date) + str(newEnergy) + str(newTaripheEnergy) + str(newGas) + str(newTaripheGas) + )
