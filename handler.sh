@@ -39,13 +39,34 @@ taripheWaterOut=${strarr[7]}
 newTaripheWaterOut=0
 waterOutName="водоотведение"
 
-taripheGas=${strarr[4]} 
-taripheEnergy=${strarr[6]}
-warm=${strarr[7]}
-build=${strarr[8]}
-waste=
-useBuild=${strarr[9]}
-rebuilding=${strarr[10]}
+taripheGas=${strarr[4]}
+newTaripheGas=0
+gasName="газоснабжение"
+
+taripheEnergy=${strarr[2]}
+newTaripheEnergy=0
+energyName="электроэнергия"
+
+warm=${strarr[8]}
+newTaripheWarm=0
+warmName="отопление"
+
+build=${strarr[9]}
+newBuild=0
+buildName="содержание домового имущества"
+
+waste=${strarr[10]}
+newWaste=0
+wasteName="обращение с ТКО"
+
+unitedWater=${strarr[11]}
+newUnitedWater=0
+unitedWaterName="общедомовое ХВС"
+
+rebuilding=${strarr[12]}
+newRebuilding=0
+rebuildingName="капремонт"
+
 
 # вносим строку для обработки во временный файл
 echo "$today, $yest" > $tempLog
@@ -54,130 +75,6 @@ countWaterNew=0
 countGasNew=0
 countEnergyNew=0
 
-# ------------------------------------------------------------------------------------------------
-#создаем форму ввода показаний счетчика
-# электроэнергия
-# inpval=`kdialog --title "Электроэнергия" --inputbox "Введите сегодняшние показания электросчётчика."`
-# if [[ $? = 0 ]] #при наличии введенного значения
-# then
-# 	# val=$inpval
-# 	countEnergyNew=$inpval
-# else # при отмене ввода
-# 	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-#         exec nano $tempCounters
-# fi
-
-# # вода
-# inpval=`kdialog --title "Водоснабжение-водоотведение" --inputbox "Введите сегодняшние показания счётчика расхода воды."`
-# if [[ $? = 0 ]] #при наличии введенного значения
-# then
-# 	# val=$inpval
-# 	countWaterNew=$inpval
-# else # при отмене ввода
-# 	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-#         exec nano $tempCounters
-# fi
-
-# # газ
-# inpval=`kdialog --title "Газоснабжение" --inputbox "Введите сегодняшние показания счётчика расхода газа."`
-# if [[ $? = 0 ]] #при наличии введенного значения
-# then
-# 	# val=$inpval
-# 	countGasNew=$inpval
-# else # при отмене ввода
-# 	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-#         exec nano $tempCounters
-# fi
-
-# echo "$countWaterNew, $countGasNew, $countEnergyNew" > $tempCounters
-
-# # ------------------------------------------------------------------------------------------
-# # сверка тарифов:
-
-# `kdialog --title "Сверка тарифов" --yesno "На данный момент тариф на электроэнергию \n составляет $taripheEnergy"`
-# if [[ $? = 0 ]] #при нажатии Ок
-# then
-#     kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
-#      # val=$inpval
-#     newTaripheEnergy=$taripheEnergy
-# else # при нажатии нет
-# 	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на электроэнергию, \n используя точку для отделения копеек."`
-#         if [[ $? = 0 ]] # при вводе данных
-#         then
-#             newTaripheEnergy=$inpval
-#         else # при отмене ввода
-# 	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-#             exec nano $tempTar
-#         fi
-# fi
-
-# `kdialog --title "Сверка тарифов" --yesno "На данный момент тариф на водоснабжение \n составляет $taripheWaterIn"`
-# if [[ $? = 0 ]] #при нажатии Ок
-# then
-#     kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
-#      # val=$inpval
-#     newTaripheWaterIn=$taripheWaterIn
-# else # при нажатии нет
-# 	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на водоснабжение, \n используя точку для отделения копеек."`
-#         if [[ $? = 0 ]] # при вводе данных
-#         then
-#             newTaripheWaterIn=$inpval
-#         else # при отмене ввода
-# 	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-#             exec nano $tempTar
-#         fi
-# fi
-
-# `kdialog --title "Сверка тарифов" --yesno "На данный момент тариф на водоотведение \n составляет $taripheWaterOut"`
-# if [[ $? = 0 ]] #при нажатии Ок
-# then
-#     kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
-#      # val=$inpval
-#     newTaripheWaterOut=$taripheWaterOut
-# else # при нажатии нет
-# 	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на водоотведение, \n используя точку для отделения копеек."`
-#         if [[ $? = 0 ]] # при вводе данных
-#         then
-#             newTaripheWaterOut=$inpval
-#         else # при отмене ввода
-# 	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-#             exec nano $tempTar
-#         fi
-# fi
-
-# `kdialog --title "Сверка тарифов" --yesno "На данный момент тариф на газоснабжение \n составляет $taripheGas"`
-# if [[ $? = 0 ]] #при нажатии Ок
-# then
-#     kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
-#      # val=$inpval
-#     newTaripheGas=$taripheGas
-# else # при нажатии нет
-# 	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на газоснабжение, \n используя точку для отделения копеек."`
-#         if [[ $? = 0 ]] # при вводе данных
-#         then
-#             newTaripheGas=$inpval
-#         else # при отмене ввода
-# 	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-#             exec nano $tempTar
-#         fi
-# fi
-
-# `kdialog --title "Сверка тарифов" --yesno "В прошлом месяце тариф на отопление \n составил $taripheGas р. \n Он остался прежним?"`
-# if [[ $? = 0 ]] #при нажатии Ок
-# then
-#     kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
-#      # val=$inpval
-#     newWarm=$warm
-# else # при нажатии нет
-# 	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на отопление, \n используя точку для отделения копеек."`
-#         if [[ $? = 0 ]] # при вводе данных
-#         then
-#             newWarm=$inpval
-#         else # при отмене ввода
-# 	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-#             exec nano $tempTar
-#         fi
-# fi
 
 markTariphe (){
     #1 taripheWaterIn
@@ -203,12 +100,40 @@ else # при нажатии нет
 fi
 }
 
+markTariphe $taripheEnergy, $energyName
+newTaripheEnergy=$new
+echo "Новый тариф на электроснабжение = $newTaripheEnergy"
+
+markTariphe $taripheGas, $gasName
+newTaripheGas=$new
+echo "Новый тариф на газоснабжение = $newTaripheGas"
+
 markTariphe $taripheWaterIn, $waterInName
 newTaripheWaterIn=$new
 echo "Новый тариф на водоснабжение = $newTaripheWaterIn"
 
 markTariphe $taripheWaterOut, $waterOutName
-newTaripheWaterIn=$new
+newTaripheWaterOut=$new
 echo "Новый тариф на водоотведение = $newTaripheWaterOut"
 
-#echo "$newTaripheWaterIn, $newTaripheWaterOut, $newTaripheGas, $newTaripheEnergy, $newWarm" > $tempTar
+markTariphe $warm, $warmName
+newTaripheWarm=$new
+echo "Новый тариф на отопление = $newTaripheWarm"
+
+markTariphe $build, $buildName
+newBuild=$new
+echo "Новый тариф на $buildName = $newBuild"
+
+markTariphe $waste, $wasteName
+newWaste=$new
+echo "Новый тариф на $wasteName = $newWaste"
+
+markTariphe $unitedWater, $unitedWaterName
+newUnitedWater=$new
+echo "Новый тариф на $unitedWaterName = $newUnitedWater"
+
+markTariphe $rebuilding, $rebuildingName
+newRebuilding=$new
+echo "Новый тариф на $rebuildingName = $newRebuilding"
+
+echo "$newTaripheEnergy, $newTaripheGas, $newTaripheWaterIn, $newTaripheWaterOut, $newTaripheWarm, $newBuild, $newWaste, $newUnitedWater, $newRebuilding" > $tempTar
