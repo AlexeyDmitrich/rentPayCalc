@@ -69,7 +69,7 @@ rebuildingName="капремонт"
 
 
 # вносим строку для обработки во временный файл
-echo "$today, $yest" > $tempLog
+echo "$yest" > $tempLog
 
 countWaterNew=0
 countGasNew=0
@@ -100,39 +100,77 @@ else # при нажатии нет
 fi
 }
 
-markTariphe $taripheEnergy, $energyName
+#создаем форму ввода показаний счетчика
+#электроэнергия
+inpval=`kdialog --title "Электроэнергия" --inputbox "Введите сегодняшние показания электросчётчика."`
+if [[ $? = 0 ]] #при наличии введенного значения
+then
+	# val=$inpval
+	countEnergyNew=$inpval
+else # при отмене ввода
+	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+        exec nano $tempCounters
+fi
+
+# вода
+inpval=`kdialog --title "Водоснабжение-водоотведение" --inputbox "Введите сегодняшние показания счётчика расхода воды."`
+if [[ $? = 0 ]] #при наличии введенного значения
+then
+	# val=$inpval
+	countWaterNew=$inpval
+else # при отмене ввода
+	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+        exec nano $tempCounters
+fi
+
+# газ
+inpval=`kdialog --title "Газоснабжение" --inputbox "Введите сегодняшние показания счётчика расхода газа."`
+if [[ $? = 0 ]] #при наличии введенного значения
+then
+	# val=$inpval
+	countGasNew=$inpval
+else # при отмене ввода
+	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+        exec nano $tempCounters
+fi
+
+echo "$countWaterNew, $countGasNew, $countEnergyNew" > $tempCounters
+
+# # ------------------------------------------------------------------------------------------
+
+markTariphe $taripheEnergy $energyName
 newTaripheEnergy=$new
 echo "Новый тариф на электроснабжение = $newTaripheEnergy"
 
-markTariphe $taripheGas, $gasName
+markTariphe $taripheGas $gasName
 newTaripheGas=$new
 echo "Новый тариф на газоснабжение = $newTaripheGas"
 
-markTariphe $taripheWaterIn, $waterInName
+markTariphe $taripheWaterIn $waterInName
 newTaripheWaterIn=$new
 echo "Новый тариф на водоснабжение = $newTaripheWaterIn"
 
-markTariphe $taripheWaterOut, $waterOutName
+markTariphe $taripheWaterOut $waterOutName
 newTaripheWaterOut=$new
 echo "Новый тариф на водоотведение = $newTaripheWaterOut"
 
-markTariphe $warm, $warmName
+markTariphe $warm $warmName
 newTaripheWarm=$new
 echo "Новый тариф на отопление = $newTaripheWarm"
 
-markTariphe $build, $buildName
+markTariphe $build $buildName
 newBuild=$new
 echo "Новый тариф на $buildName = $newBuild"
 
-markTariphe $waste, $wasteName
+markTariphe $waste $wasteName
 newWaste=$new
 echo "Новый тариф на $wasteName = $newWaste"
 
-markTariphe $unitedWater, $unitedWaterName
+markTariphe $unitedWater $unitedWaterName
 newUnitedWater=$new
 echo "Новый тариф на $unitedWaterName = $newUnitedWater"
 
-markTariphe $rebuilding, $rebuildingName
+markTariphe $rebuilding $rebuildingName
 newRebuilding=$new
 echo "Новый тариф на $rebuildingName = $newRebuilding"
 
