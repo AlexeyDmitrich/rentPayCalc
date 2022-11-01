@@ -11,7 +11,7 @@ BEEP=/usr/share/sounds/freedesktop/stereo/bell.oga
 export DISPLAY SESSION_MANAGER XAUTHORITY DBUS_SESSION_BUS_ADDRES XDG_RUNTIME_DIR #BEEP
 
 #объявляем переменными рабочие файлы
-bigLog=bigLog #.csv
+bigLog=bigLog.csv
 tempLog=temp_log.csv
 tempCounters=temp_counters.csv
 tempTar=temp_tariphes.csv
@@ -22,10 +22,10 @@ datex=`date +'%d.%m.%Y'`
 today=$datex
 
 #удаляем пустые строки файла
-`sed -i '/^$/d' $bigLog.csv`
+`sed -i '/^$/d' $bigLog` #.csv`
 
 #читаем последнюю строку из документа
-yest=`tail -1 $bigLog.csv`
+yest=`tail -1 $bigLog` #.csv`
 IFS=","
 read -a strarr <<< "$yest"
 
@@ -94,7 +94,7 @@ else # при нажатии нет
             #return $new
         else # при отмене ввода
 	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-            exec nano $tempTar
+            exec $EDITOR $tempTar
         fi
 #        return $new
 fi
@@ -109,7 +109,7 @@ then
 	countEnergyNew=$inpval
 else # при отмене ввода
 	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-        exec nano $tempCounters
+        exec $EDITOR $tempCounters
 fi
 
 # вода
@@ -120,7 +120,7 @@ then
 	countWaterNew=$inpval
 else # при отмене ввода
 	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-        exec nano $tempCounters
+        exec $EDITOR $tempCounters
 fi
 
 # газ
@@ -131,7 +131,7 @@ then
 	countGasNew=$inpval
 else # при отмене ввода
 	kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-        exec nano $tempCounters
+        exec $EDITOR $tempCounters
 fi
 
 echo "$countWaterNew, $countGasNew, $countEnergyNew" > $tempCounters
@@ -140,38 +140,40 @@ echo "$countWaterNew, $countGasNew, $countEnergyNew" > $tempCounters
 
 markTariphe $taripheEnergy $energyName
 newTaripheEnergy=$new
-echo "Новый тариф на электроснабжение = $newTaripheEnergy"
+#echo "Новый тариф на электроснабжение = $newTaripheEnergy"
 
 markTariphe $taripheGas $gasName
 newTaripheGas=$new
-echo "Новый тариф на газоснабжение = $newTaripheGas"
+#echo "Новый тариф на газоснабжение = $newTaripheGas"
 
 markTariphe $taripheWaterIn $waterInName
 newTaripheWaterIn=$new
-echo "Новый тариф на водоснабжение = $newTaripheWaterIn"
+#echo "Новый тариф на водоснабжение = $newTaripheWaterIn"
 
 markTariphe $taripheWaterOut $waterOutName
 newTaripheWaterOut=$new
-echo "Новый тариф на водоотведение = $newTaripheWaterOut"
+#echo "Новый тариф на водоотведение = $newTaripheWaterOut"
 
 markTariphe $warm $warmName
 newTaripheWarm=$new
-echo "Новый тариф на отопление = $newTaripheWarm"
+#echo "Новый тариф на отопление = $newTaripheWarm"
 
 markTariphe $build $buildName
 newBuild=$new
-echo "Новый тариф на $buildName = $newBuild"
+#echo "Новый тариф на $buildName = $newBuild"
 
 markTariphe $waste $wasteName
 newWaste=$new
-echo "Новый тариф на $wasteName = $newWaste"
+#echo "Новый тариф на $wasteName = $newWaste"
 
 markTariphe $unitedWater $unitedWaterName
 newUnitedWater=$new
-echo "Новый тариф на $unitedWaterName = $newUnitedWater"
+#echo "Новый тариф на $unitedWaterName = $newUnitedWater"
 
 markTariphe $rebuilding $rebuildingName
 newRebuilding=$new
-echo "Новый тариф на $rebuildingName = $newRebuilding"
+#echo "Новый тариф на $rebuildingName = $newRebuilding"
 
 echo "$newTaripheEnergy, $newTaripheGas, $newTaripheWaterIn, $newTaripheWaterOut, $newTaripheWarm, $newBuild, $newWaste, $newUnitedWater, $newRebuilding" > $tempTar
+
+`python test.py`

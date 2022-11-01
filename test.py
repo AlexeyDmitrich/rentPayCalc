@@ -3,10 +3,10 @@ import pandas as pd
 rent=6000
 
 allInOne = pd.read_csv('temp_log.csv', header=None)
-print(allInOne)
+#print(allInOne)
 
-date= allInOne[0]
-print(date)
+date= (allInOne[0][0])
+#print(date)
 # собираем предыдущие показания:
 lastWater= float(allInOne[5])
 lastGas= float(allInOne[3])
@@ -30,7 +30,7 @@ newTaripheBuild = float(tariphesRefresh[5])
 newTaripheWaste = float(tariphesRefresh[6])
 newTaripheUnitedWater = float(tariphesRefresh[7])
 newTaripheRebuilding = float(tariphesRefresh[8])
-print(tariphesRefresh)
+#print(tariphesRefresh)
 
 #payment
 def usage (last, new):
@@ -44,9 +44,9 @@ def payByCount (last, new, tariphe1, tariphe2):
 def payByTariphe (tariphe):
     return float(tariphe)
 
-payEnergy = payByCount (lastEnergy, newEnergy, newTaripheEnergy, 0)
-payGas = payByCount (lastGas, newGas, newTaripheGas, 0)
-payWater = payByCount (lastWater, newWater, newTaripheWaterIn, newTaripheWaterOut)
+payEnergy = round(payByCount (lastEnergy, newEnergy, newTaripheEnergy, 0), 2)
+payGas = round(payByCount (lastGas, newGas, newTaripheGas, 0), 2)
+payWater = round(payByCount (lastWater, newWater, newTaripheWaterIn, newTaripheWaterOut), 2)
 payWarm = payByTariphe (newTaripheWarm)
 payBuild = payByTariphe (newTaripheBuild)
 payWaste = payByTariphe (newTaripheWaste)
@@ -54,23 +54,27 @@ payUnitedWater = payByTariphe (newTaripheUnitedWater)
 payRebuilding = payByTariphe (newTaripheRebuilding)
 
 summPay=(payEnergy+payGas+payWater+payWarm+payBuild+payWaste+payUnitedWater+payRebuilding+rent)
-print ("Суммарная оплата составила: ", summPay)
+#print ("Суммарная оплата составила: ", summPay)
 
 # формирование чека
 tradeCheck = open ('check.txt', 'a+')
 tradeCheck.writelines(date + '\n')
 tradeCheck.writelines("расчет платежа: \n")
 tradeCheck.writelines("|     параметр           |   расход   |   к оплате  |\n")
-tradeCheck.writelines("| электроснабжение       |" + str(usage(lastEnergy,newEnergy)) + "| " + str(payEnergy) + "       |\n")
-tradeCheck.writelines("| газоснабжение          |" + str(usage(lastGas,newGas)) + "| " + str(payGas) + "       |\n")
-tradeCheck.writelines("| водоснабжение          |" + str(usage(lastWater,newWater)) + "| " + str(payWater) + "       |\n")
-tradeCheck.writelines("| отопление              |   ------   | " + str(payWarm) + "       |\n")
-tradeCheck.writelines("| содерж.домов.имущества |   ------   | " + str(payBuild) + "       |\n")
-tradeCheck.writelines("| обращение с ТКО        |   ------   | " + str(payWaste) + "       |\n")
-tradeCheck.writelines("| общедомовое ХВС        |   ------   | " + str(payUnitedWater) + "       |\n")
-tradeCheck.writelines("| капремонт              |   ------   | " + str(payRebuilding) + "       |\n")
-tradeCheck.writelines("\n Итого, считая стоимость аренды (" + str(rent) + "р.) :" + str(summPay) + "р. \n \n")
+tradeCheck.writelines("| электроснабжение       |" + str(usage(lastEnergy,newEnergy)) + "         " + str(payEnergy) + "       |\n")
+tradeCheck.writelines("| газоснабжение          |" + str(usage(lastGas,newGas)) + "          " + str(payGas) + "       |\n")
+tradeCheck.writelines("| водоснабжение          |" + str(usage(lastWater,newWater)) + "           " + str(payWater) + "       |\n")
+tradeCheck.writelines("| отопление              |   ------   | " + str(payWarm) + "        \n")
+tradeCheck.writelines("| содерж.домов.имущества |   ------   | " + str(payBuild) + "       \n")
+tradeCheck.writelines("| обращение с ТКО        |   ------   | " + str(payWaste) + "       \n")
+tradeCheck.writelines("| общедомовое ХВС        |   ------   | " + str(payUnitedWater) + "         \n")
+tradeCheck.writelines("| капремонт              |   ------   | " + str(payRebuilding) + "       \n")
+tradeCheck.writelines("\n Итого, считая стоимость аренды (" + str(rent) + "р.): " + str(summPay) + "р. \n \n")
 tradeCheck.close
 
 bigLog = open('bigLog.csv', 'a+')
-bigLog.writelines(str(date) + str(newEnergy) + str(newTaripheEnergy) + str(newGas) + str(newTaripheGas) + )
+bigLog.writelines("\n" + str(date) +","+ str(newEnergy) +","+ str(newTaripheEnergy) +","+ str(newGas) +","+ str(newTaripheGas) +","+ str(newWater) +","+ str(newTaripheWaterIn) +","+ str(newTaripheWaterOut) +","+ str(newTaripheWarm) +","+ str(newTaripheBuild) +","+ str(newTaripheWaste) +","+ str(newTaripheUnitedWater) +","+ str(newTaripheRebuilding ))
+bigLog.close
+
+# bigLog= pd.DataFrame([[str(date) , str(newEnergy) , str(newTaripheEnergy) , str(newGas) , str(newTaripheGas) , str(newWater) , str(newTaripheWaterIn) , str(newTaripheWaterOut) , str(newTaripheWarm) , str(newTaripheBuild) , str(newTaripheWaste) , str(newTaripheUnitedWater) , str(newTaripheRebuilding )]])
+# bigLog.to_csv('bigLog', index=False)
