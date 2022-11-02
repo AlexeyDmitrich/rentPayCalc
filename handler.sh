@@ -177,6 +177,6 @@ newRebuilding=$new
 echo "$newTaripheEnergy, $newTaripheGas, $newTaripheWaterIn, $newTaripheWaterOut, $newTaripheWarm, $newBuild, $newWaste, $newUnitedWater, $newRebuilding" > $tempTar
 
 `python test.py`
-if [[ $? = 0 ]]
-        then $EDITOR check.txt
-fi 
+# if [[ $? = 0 ]]
+#         then $EDITOR check.txt
+# fi 
