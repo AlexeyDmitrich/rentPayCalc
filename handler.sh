@@ -180,6 +180,6 @@ echo "$newTaripheEnergy, $newTaripheGas, $newTaripheWaterIn, $newTaripheWaterOut
 
 # стартуем обработку:
 `python calc.py`
-if [[ $? = 0 ]]    # запускаем графическую оболочку, если программа отработала в 0
-        then `python testGui.py`
-fi 
+# if [[ $? = 0 ]]    # запускаем графическую оболочку, если программа отработала в 0
+#        then `python testGui.py`
+# fi 

@@ -81,7 +81,7 @@ def writeLog ():
         bigLog.writelines("\n" + str(date) +","+ str(newEnergy) +","+ str(newTaripheEnergy) +","+ str(newGas) +","+ str(newTaripheGas) +","+ str(newWater) +","+ str(newTaripheWaterIn) +","+ str(newTaripheWaterOut) +","+ str(newTaripheWarm) +","+ str(newTaripheBuild) +","+ str(newTaripheWaste) +","+ str(newTaripheUnitedWater) +","+ str(newTaripheRebuilding ))
         bigLog.close
 
-
+summPay = calcSumPay ()
 #формирование чека 
 # делает запись в журнал в читаемом формате
 def writeCheck ():
@@ -100,6 +100,25 @@ def writeCheck ():
         tradeCheck.writelines("\n Итого, считая стоимость аренды (" + str(rent) + "р.): " + str(summPay) + "р. \n \n")
         tradeCheck.close
 
-summPay = calcSumPay ()
+# делаем красивенький графический вывод
+sg.theme('DarkGrey13')
+layout =[[sg.Text('Сводная таблица оплаты', (37, None), (None,None), True, False, False, "sunken", ("Noto Sans Regular", 14))],
+                [sg.Text(date)],
+                [sg.Text('Параметр', (None, None), (26, 1), True, False, False, "groove", ("Noto Sans Regular", 12)), sg.Text('Расход', (None, None), (7, 1), True, False, False, "groove", ("Noto Sans Regular", 12)), sg.Text('К оплате', (None, None), (9, 1), True, False, False, "groove", ("Noto Sans Regular", 12))],
+                [sg.Text('Электроснабжение', (34,1)), sg.Text(str(usage(lastEnergy,newEnergy)), (9,1)), sg.Text(str(payEnergy))],
+                [sg.Text('Газоснабжение', (34,1)), sg.Text(str(usage(lastGas,newGas)), (9,1)), sg.Text(str(payGas))],
+                [sg.Text('Водоснабжение', (34,1)), sg.Text(str(usage(lastWater,newWater)), (9,1)), sg.Text(str(payWater))],
+                [sg.Text('Отопление', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(payWarm))],
+                [sg.Text('Содержание общ имущества', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(payBuild))],
+                [sg.Text('Обращение с ТКО', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(payWaste))],
+                [sg.Text('Общедомовое ХВС', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(payUnitedWater))],
+                [sg.Text('Капремонт', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(payRebuilding))],
+                [sg.Text('Итого, учитывая стоимость аренды    ('), sg.Text(str(rent)), sg.Text('р.) :'), sg.Text(str(summPay))],
+                [sg.Submit('С результатами ознакомлен', (55))]
+                ]
+window = sg.Window ('Чек за коммунальные услуги', layout)
+event, values = window.read(close=True)
+window.close()
+
 writeLog ()
 writeCheck ()
