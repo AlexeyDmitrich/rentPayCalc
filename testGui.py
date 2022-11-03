@@ -1,23 +1,21 @@
-# форма ввода 
-#import PySimpleGUI as sg
-#sg.preview_all_look_and_feel_themes()
-# sg.theme('DarkGrey15')
-# layout = [[sg.Text('Окошко ввода.')],      
-#                  [sg.InputText('010111')], 
-#                  [sg.Checkbox('Согласие с действием', True)],
-#                  [sg.Submit('Океей'), sg.Cancel('Неа')]]      
-# window = sg.Window('Заголовок окошка ввода', layout)    
-
-# event, values = window.read()    
-# window.close()
-
-# text_input = values[0]    
-# sg.popup('Вы ввели значение:', text_input, )
-
-# sg.theme('DarkGrey13')
-# layout =[[sg.Text('Это окно полностью создано вручную \n оно экспериментальное.', (None, None), (None,None), True, False, False, "sunken", ("Noto Sans Regular", 16))],
-#                 [sg.Submit('Ok \n ну а чё?', (None, None), (25, 10)), sg.Text('Этот текст будет \n аккуратненько размещен \n справа от большой \n кнопки \"окей\"', (None, None), (None, 6), True, False, False, "groove", ("Noto Sans Regular", 12))]
-#                 ]
-# window = sg.Window ('Нешаблонное окно', layout)
-# event = window.read()
-# window.close()
+import PySimpleGUI as sg
+import calc as cl
+# красивый десктопный вывод
+sg.theme('DarkGrey13')
+layout =[[sg.Text('Сводная таблица оплаты', (37, None), (None,None), True, False, False, "sunken", ("Noto Sans Regular", 14))],
+                [sg.Text(cl.date)],
+                [sg.Text('Параметр', (None, None), (26, 1), True, False, False, "groove", ("Noto Sans Regular", 12)), sg.Text('Расход', (None, None), (7, 1), True, False, False, "groove", ("Noto Sans Regular", 12)), sg.Text('К оплате', (None, None), (9, 1), True, False, False, "groove", ("Noto Sans Regular", 12))],
+                [sg.Text('Электроснабжение', (34,1)), sg.Text(str(cl.usage(cl.lastEnergy,cl.newEnergy)), (9,1)), sg.Text(str(cl.payEnergy))],
+                [sg.Text('Газоснабжение', (34,1)), sg.Text(str(cl.usage(cl.lastGas,cl.newGas)), (9,1)), sg.Text(str(cl.payGas))],
+                [sg.Text('Водоснабжение', (34,1)), sg.Text(str(cl.usage(cl.lastWater,cl.newWater)), (9,1)), sg.Text(str(cl.payWater))],
+                [sg.Text('Отопление', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(cl.payWarm))],
+                [sg.Text('Содержание общ имущества', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(cl.payBuild))],
+                [sg.Text('Обращение с ТКО', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(cl.payWaste))],
+                [sg.Text('Общедомовое ХВС', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(cl.payUnitedWater))],
+                [sg.Text('Капремонт', (34,1)), sg.Text(' ---- ', (9,1)), sg.Text(str(cl.payRebuilding))],
+                [sg.Text('Итого, учитывая стоимость аренды    ('), sg.Text(str(cl.rent)), sg.Text('р.) :'), sg.Text(str(cl.summPay))],
+                [sg.Submit('С результатами ознакомлен', (55))]
+                ]
+window = sg.Window ('Чек за коммунальные услуги', layout)
+event, values = window.read(close=True)
+window.close()

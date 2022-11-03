@@ -29,12 +29,11 @@ yest=`tail -1 $bigLog` #.csv`
 IFS=","
 read -a strarr <<< "$yest"
 
-#водоснабжение
+# читаем старый тариф, готовим место под новый, задаем имя параметра
 taripheWaterIn=${strarr[6]}
 newTaripheWaterIn=0
 waterInName="водоснабжение"
 
-#водоотведение
 taripheWaterOut=${strarr[7]}
 newTaripheWaterOut=0
 waterOutName="водоотведение"
@@ -71,14 +70,15 @@ rebuildingName="капремонт"
 # вносим строку для обработки во временный файл
 echo "$today, ${strarr[1]}, ${strarr[2]}, ${strarr[3]}, ${strarr[4]}, ${strarr[5]}, ${strarr[6]}, ${strarr[7]}, ${strarr[8]}, ${strarr[9]}, ${strarr[10]}, ${strarr[11]}, ${strarr[12]}" > $tempLog
 
+# объявляем счетчики
 countWaterNew=0
 countGasNew=0
 countEnergyNew=0
 
 
 markTariphe (){
-    #1 taripheWaterIn
-    #2 waterName
+    #1 tariphe***In
+    #2 ***Name
 `kdialog --title "Сверка тарифов" --yesno "В прошлом месяце тариф на $2 \n составил $1 р. \n Он остался прежним?"`
 if [[ $? = 0 ]] #при нажатии Ок
 then
@@ -134,6 +134,7 @@ else # при отмене ввода
         exec $EDITOR $tempCounters
 fi
 
+# собираем показания счетчиков в файл
 echo "$countWaterNew, $countGasNew, $countEnergyNew" > $tempCounters
 
 # # ------------------------------------------------------------------------------------------
@@ -174,9 +175,11 @@ markTariphe $rebuilding $rebuildingName
 newRebuilding=$new
 #echo "Новый тариф на $rebuildingName = $newRebuilding"
 
+# собираем строковый файл с тарифами
 echo "$newTaripheEnergy, $newTaripheGas, $newTaripheWaterIn, $newTaripheWaterOut, $newTaripheWarm, $newBuild, $newWaste, $newUnitedWater, $newRebuilding" > $tempTar
 
-`python test.py`
-# if [[ $? = 0 ]]
-#         then $EDITOR check.txt
-# fi 
+# стартуем обработку:
+`python calc.py`
+if [[ $? = 0 ]]    # запускаем графическую оболочку, если программа отработала в 0
+        then `python testGui.py`
+fi 
