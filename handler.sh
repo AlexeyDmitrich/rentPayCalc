@@ -1,21 +1,10 @@
 #! /bin/bash
 
-#Объявляем переменные окружения
-DISPLAY=:0.0
-#SESSION_MANAGER=local/reu-sigma:@/tmp/.ICE-unix/897,unix/reu-sigma:/tmp/.ICE-unix/897
-XAUTHORITY=/home/reu/.Xauthority
-DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
-XDG_RUNTIME_DIR=/run/user/1000
-BEEP=/usr/share/sounds/freedesktop/stereo/bell.oga
-#Экспортируем окружения
-export DISPLAY SESSION_MANAGER XAUTHORITY DBUS_SESSION_BUS_ADDRES XDG_RUNTIME_DIR #BEEP
-
 #объявляем переменными рабочие файлы
 bigLog=bigLog.csv
 tempLog=temp_log.csv
 tempCounters=temp_counters.csv
 tempTar=temp_tariphes.csv
-
 
 #готовим сегодняшнюю дату
 datex=`date +'%d.%m.%Y'`
@@ -66,7 +55,6 @@ rebuilding=${strarr[12]}
 newRebuilding=0
 rebuildingName="капремонт"
 
-
 # вносим строку для обработки во временный файл
 echo "$today, ${strarr[1]}, ${strarr[2]}, ${strarr[3]}, ${strarr[4]}, ${strarr[5]}, ${strarr[6]}, ${strarr[7]}, ${strarr[8]}, ${strarr[9]}, ${strarr[10]}, ${strarr[11]}, ${strarr[12]}" > $tempLog
 
@@ -75,29 +63,30 @@ countWaterNew=0
 countGasNew=0
 countEnergyNew=0
 
-
+# функция для сверки тарифов с предыдущими
 markTariphe (){
-    #1 tariphe***In
-    #2 ***Name
-`kdialog --title "Сверка тарифов" --yesno "В прошлом месяце тариф на $2 \n составил $1 р. \n Он остался прежним?"`
-if [[ $? = 0 ]] #при нажатии Ок
-then
-    kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
-     # val=$inpval
-    new=$1
-#    return $new
-else # при нажатии нет
-	inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на $2, \n используя точку для отделения копеек."`
-        if [[ $? = 0 ]] # при вводе данных
+        #1 tariphe***In
+        #2 ***Name
+        `kdialog --title "Сверка тарифов" --yesno "В прошлом месяце тариф на $2 \n составил $1 р. \n Он остался прежним?"`
+        if [[ $? = 0 ]] #при нажатии Ок
         then
-            new=$inpval
-            #return $new
-        else # при отмене ввода
-	        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
-            exec $EDITOR $tempTar
+        kdialog --title "Тариф сохранен" --passivepopup "При необходимости его можно изменить в файле"
+        # val=$inpval
+        new=$1
+        #    return $new
+        else # при нажатии нет
+                inpval=`kdialog --title "Изменение тарифа" --inputbox "Введите новый тариф на $2, \n используя точку для отделения копеек."`
+                if [[ $? = 0 ]] # при вводе данных
+                then
+                new=$inpval
+                kdialog --title "Тариф обновлен" --passivepopup "При необходимости его можно изменить в файле"
+                #return $new
+                else # при отмене ввода
+                        kdialog --title "Что-то пошло не так" --error "Не хотите через форму - вводите вручную."
+                exec $EDITOR $tempTar
+                fi
+        #        return $new
         fi
-#        return $new
-fi
 }
 
 #создаем форму ввода показаний счетчика
@@ -138,6 +127,8 @@ fi
 echo "$countWaterNew, $countGasNew, $countEnergyNew" > $tempCounters
 
 # # ------------------------------------------------------------------------------------------
+# далее: сверка каждого тарифа с помощью функции markTariphe
+# и упаковка результатов в .csv файл
 
 markTariphe $taripheEnergy $energyName
 newTaripheEnergy=$new
@@ -178,8 +169,6 @@ newRebuilding=$new
 # собираем строковый файл с тарифами
 echo "$newTaripheEnergy, $newTaripheGas, $newTaripheWaterIn, $newTaripheWaterOut, $newTaripheWarm, $newBuild, $newWaste, $newUnitedWater, $newRebuilding" > $tempTar
 
-# стартуем обработку:
+
+# стартуем обработку собранных данных:
 `python calc.py`
-# if [[ $? = 0 ]]    # запускаем графическую оболочку, если программа отработала в 0
-#        then `python testGui.py`
-# fi 
